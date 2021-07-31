@@ -39,6 +39,7 @@ public class CategoryRestControler {
   
   @PostMapping("/delete")
   public ResponseEntity<?> deleteUser(@RequestBody List<Long> ids) {
+	  System.out.println("dieu");
     Boolean temp = categoryService.deleteCategoryById(ids);
     if (Boolean.TRUE.equals(temp)) {
       return new ResponseEntity<User>(HttpStatus.NO_CONTENT);

@@ -12,12 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.maingocdieu.SportShop.dto.PhieuNhapDto;
 import com.maingocdieu.SportShop.dto.ProductDto;
 import com.maingocdieu.SportShop.entity.Product;
 import com.maingocdieu.SportShop.entity.User;
+import com.maingocdieu.SportShop.service.IPhieuNhapService;
 import com.maingocdieu.SportShop.service.IProductService;
 
 import lombok.var;
@@ -28,6 +29,9 @@ public class ProductRestController {
 
   @Autowired
   IProductService productService;
+  
+  @Autowired 
+  IPhieuNhapService phieunhapSerice;
   
 
   @PostMapping()
@@ -83,9 +87,24 @@ public class ProductRestController {
     return new ResponseEntity<Page<Product>>(response, HttpStatus.OK);
   }
   
+  @GetMapping("/getAll")
+	public ResponseEntity< List<Product>> getAll() {
+	  List<Product> response = productService.findAll();
+	 return new ResponseEntity< List<Product>>(response, HttpStatus.OK);
+}
   
   
+  @PostMapping("/insertPhieuNhap")
+  public ResponseEntity<?> insertaProducts(@RequestBody PhieuNhapDto phieuNhapDto) {
+	  PhieuNhapDto a = phieuNhapDto;
+	  phieunhapSerice.InsertPhieuNhap(phieuNhapDto);
+	  return ResponseEntity.ok(a);
+  }
   
-  
+  @GetMapping("/test2")
+  public ResponseEntity<?> inasertaProducts() {
+	  System.out.println("Dadada");
+	  return ResponseEntity.ok(phieunhapSerice.GetChiTietPhieuPhap(12L));
+  }
   
 }

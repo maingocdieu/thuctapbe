@@ -14,10 +14,9 @@ public interface ProductReponsitory extends  PagingAndSortingRepository<Product,
           + " FROM Product u"
           + "   JOIN u.category category"
           + " WHERE (:nameProduct is null OR u.nameProduct like :nameProduct)"
-          + "  AND (:price is null OR u.price<=:price )"
           + "  AND (:category is null OR category.id = :category)")
   Page<Product> findAllUserWithPagination(@Param("nameProduct") String nameProduct,
-      @Param("category") Long category, @Param("price") Float price, Pageable pageable);
+      @Param("category") Long category, Pageable pageable);
 
   
   Page<Product> findByCategoryId(Long id, Pageable pageable);

@@ -38,7 +38,7 @@ public class ProductServiceImpl implements IProductService {
     if (existProduct.isPresent()) {
       Product product = existProduct.get();
       product.setNameProduct(productDto.getNameProduct());
-      product.setPrice(productDto.getPrice());
+      product.setGiaBanRa(productDto.getGiaBanRa());
       Category category = categoryRepository.findOneByCode(productDto.getCategoryCode());
       product.setCategory(category);
       if (productDto.getBase64() != null) {
@@ -67,6 +67,7 @@ public class ProductServiceImpl implements IProductService {
     Product product = (Product) productConverter.convertToEntity(productDto);
     Category category = categoryRepository.findOneByCode(productDto.getCategoryCode());
     product.setCategory(category);
+    product.setSoLuong(0);
     if (productDto.getBase64() != null) {
       String base64Image = productDto.getBase64().split(",")[1];
       byte[] decodeBase64 = Base64.getDecoder().decode(base64Image.getBytes());
@@ -96,11 +97,11 @@ public class ProductServiceImpl implements IProductService {
     }
   }
 
-  @Override
-  public Page<Product> findPageProduct(ProductDto productDto) {
-    Pageable firstPageWithTwoElements = PageRequest.of(productDto.getPage(), 10);
-    return productRespository.findAllUserWithPagination(productDto.getNameProduct(),productDto.getCategoryId(),productDto.getPrice(),firstPageWithTwoElements);
-  }
+//  @Override
+//  public Page<Product> findPageProduct(ProductDto productDto) {
+//    Pageable firstPageWithTwoElements = PageRequest.of(productDto.getPage(), 10);
+//    return productRespository.findAllUserWithPagination(productDto.getNameProduct(),productDto.getCategoryId(),productDto.getGiaBanRa(),firstPageWithTwoElements);
+//  }
 
 @Override
 public Page<Product> findAll(ProductDto productDto) {
@@ -112,6 +113,18 @@ public Page<Product> findAll(ProductDto productDto) {
 public Page<Product> findAllByCategorys(Long id) {
 	Pageable pageable = PageRequest.of(0, 10);
 	return productRespository.findByCategoryId(id,pageable);
+}
+
+@Override
+public List<Product> findAll() {
+	
+	return (List<Product>) productRespository.findAll();
+}
+
+@Override
+public Page<Product> findPageProduct(ProductDto productDto) {
+	// TODO Auto-generated method stub
+	return null;
 }
 
 }

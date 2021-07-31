@@ -25,4 +25,6 @@ public interface IProductService {
   
   public Page<Product> findAllByCategorys(Long id);
   
+  public List<Product> findAll();
+  
 }

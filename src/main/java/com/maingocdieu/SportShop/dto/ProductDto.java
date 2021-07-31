@@ -22,7 +22,11 @@ public class ProductDto extends AbstractDTO<ProductDto> {
 
 	private String thumNail;
 
-	private Float price;
+	private Float giaBanRa;
+	
+	private Float soLuong;
+	
+	private Float giaNhapVao;
 
 	private String base64;
 

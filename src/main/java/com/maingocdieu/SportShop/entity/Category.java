@@ -19,7 +19,7 @@ import lombok.EqualsAndHashCode;
     @Column(name="CODE")
     private String  code;
     
-    @Column(name= "Name")
+    @Column(name= "Name",columnDefinition = "nvarchar(200)")
     private String name;
     
     @JsonIgnore

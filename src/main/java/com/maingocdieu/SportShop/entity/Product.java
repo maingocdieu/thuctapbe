@@ -30,8 +30,11 @@ public class Product extends BaseEntity {
   private String thumNail;
 
   @Column(name = "Price", nullable = false)
-  private Float price;
+  private Float giaBanRa;
 
+  @Column(name = "SoLuong",columnDefinition = "integer default 0")
+  private Integer soLuong;
+  
   @ManyToOne
   @JoinColumn(name = "category_id")
   @JsonIgnore
@@ -39,6 +42,10 @@ public class Product extends BaseEntity {
 
   @OneToMany(mappedBy = "order")
   List<OderDetail> orderDetails = new ArrayList<OderDetail>();
+  
+
+  @OneToMany(mappedBy = "goodsReceivedNote")
+  private List<GoodsReceivedNoteDetail> goodsReceivedNote;
 
 
 }

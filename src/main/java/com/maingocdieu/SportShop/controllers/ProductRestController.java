@@ -154,7 +154,6 @@ public class ProductRestController {
   
   @GetMapping("/getAllOder")
   public ResponseEntity<?> getAllOder() {
-	  System.out.println("Dadadada");
 	return ResponseEntity.ok(orderService.getAllOrder()); 
 	  
   }

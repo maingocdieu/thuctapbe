@@ -16,6 +16,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * @author Admin
  *
@@ -41,16 +43,13 @@ public class User extends BaseEntity {
 	@Column(nullable = false)
 	private String password;
 
-	@Column
-	private Integer status;
-
-	@Column(name = "Adress")
+	@Column(name = "Adress", columnDefinition = "nvarchar(255)")
 	private String address;
 
 	@Column(name = "Phone")
 	private String phone;
 	
-	@Column(columnDefinition = "nvarchar")
+	@Column(columnDefinition = "nvarchar(255)")
 	private String fullName;
 
 	public String getFullName() {
@@ -70,7 +69,7 @@ public class User extends BaseEntity {
 		this.username = username;
 		this.email = email;
 		this.password = password;
-		this.status = status;
+		
 		this.address = address;
 		this.phone = phone;
 		this.fullName = fullName;
@@ -78,14 +77,7 @@ public class User extends BaseEntity {
 		this.orders = orders;
 	}
 
-	public Integer getStatus() {
-		return status;
-	}
-
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
-
+	
 	public String getAddress() {
 		return address;
 	}
@@ -107,6 +99,7 @@ public class User extends BaseEntity {
 	private Set<Role> roles = new HashSet<>();
 
 	@OneToMany(mappedBy = "user")
+	@JsonIgnore
 	private Set<Order> orders;
 
 	public User() {

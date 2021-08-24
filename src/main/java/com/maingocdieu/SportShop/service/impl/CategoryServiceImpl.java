@@ -53,6 +53,17 @@ public class CategoryServiceImpl implements ICategoryService {
     return (List<Category>) categoryRepository.findAll();
   }
 
+@Override
+public Boolean DeleteCateGory(Long id) {
+	Category category = categoryRepository.findById(id).get();
+	if(category.getListProduct().size() >0) {
+		return false;
+	} else {
+		categoryRepository.deleteById(id);
+		return true;
+	}
+}
+
 
 
 }

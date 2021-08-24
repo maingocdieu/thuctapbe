@@ -26,6 +26,8 @@ public class ProductDto extends AbstractDTO<ProductDto> {
 	
 	private Float soLuong;
 	
+	private String describe;
+	
 	private Float giaNhapVao;
 
 	private String base64;

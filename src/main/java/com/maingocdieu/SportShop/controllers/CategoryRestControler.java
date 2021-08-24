@@ -51,4 +51,11 @@ public class CategoryRestControler {
   public List<Category> getAllCategory(){
     return categoryService.findAllCategory();
   }
+  
+  
+  
+  @PostMapping("/deleteCategory")
+  public ResponseEntity<?> DeleteCategory(@RequestBody Long id) {
+    return ResponseEntity.ok(categoryService.DeleteCateGory(id));
+  }
 }

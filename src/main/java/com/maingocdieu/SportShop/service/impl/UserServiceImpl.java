@@ -10,7 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.maingocdieu.SportShop.converter.UserConverter;
+import com.maingocdieu.SportShop.dto.ProductDto;
 import com.maingocdieu.SportShop.dto.UserDto;
+import com.maingocdieu.SportShop.entity.Product;
 import com.maingocdieu.SportShop.entity.User;
 import com.maingocdieu.SportShop.repository.RoleRepository;
 import com.maingocdieu.SportShop.repository.UserRepository;
@@ -35,14 +37,11 @@ public class UserServiceImpl implements IUserService {
 //  }
 
   @Override
-  public User updateUser(long id, User userEntity) {
+  public User updateUser(long id, UserDto userEntity) {
     Optional<User> user = userReponsitory.findById(id);
     if (user.isPresent()) {
       User updateUser = user.get();
-      updateUser.setCreatedDate(userEntity.getCreatedDate());
       updateUser.setFullName(userEntity.getFullName());
-      updateUser.setUsername(userEntity.getUsername());
-      updateUser.setPassword(userEntity.getPassword());
       updateUser.setEmail(userEntity.getEmail());
       updateUser.setAddress(userEntity.getAddress());
       updateUser.setPhone(userEntity.getPhone());
@@ -135,6 +134,12 @@ public List<User> findByPagingCriteria(String userName, Pageable pageable) {
 public List<User> findByCriteria(UserDto userDto) {
 	// TODO Auto-generated method stub
 	return null;
+}
+
+@Override
+public Page<User> findAll(UserDto userDto) {
+	Pageable pageable = PageRequest.of(userDto.getPage(), 10);
+	return  userReponsitory.findAll(pageable);
 }
  
 }

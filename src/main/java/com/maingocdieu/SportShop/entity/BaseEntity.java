@@ -42,7 +42,5 @@ public abstract class BaseEntity {
 	@LastModifiedDate
 	private Date modifiedDate;
 
-	@Column
-	private Boolean isDeleted;
 
 }

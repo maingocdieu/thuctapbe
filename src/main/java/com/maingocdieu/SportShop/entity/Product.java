@@ -2,6 +2,7 @@ package com.maingocdieu.SportShop.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -28,6 +29,9 @@ public class Product extends BaseEntity {
   
   @Column(name = "Thumnail")
   private String thumNail;
+  
+  @Column(name = "describe",columnDefinition = "ntext")
+  private String describe;
 
   @Column(name = "Price", nullable = false)
   private Float giaBanRa;
@@ -37,14 +41,15 @@ public class Product extends BaseEntity {
   
   @ManyToOne
   @JoinColumn(name = "category_id")
-  @JsonIgnore
   private Category category;
 
   @OneToMany(mappedBy = "order")
+  @JsonIgnore
   List<OderDetail> orderDetails = new ArrayList<OderDetail>();
   
 
   @OneToMany(mappedBy = "goodsReceivedNote")
+  @JsonIgnore
   private List<GoodsReceivedNoteDetail> goodsReceivedNote;
 
 

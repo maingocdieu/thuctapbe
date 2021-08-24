@@ -1,14 +1,18 @@
 package com.maingocdieu.SportShop.service.impl;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.maingocdieu.SportShop.dto.PhieuNhapDetailDto;
 import com.maingocdieu.SportShop.dto.PhieuNhapDto;
+import com.maingocdieu.SportShop.dto.UpdatePNDto;
 import com.maingocdieu.SportShop.entity.GoodsReceivedNote;
 import com.maingocdieu.SportShop.entity.GoodsReceivedNoteDetail;
+import com.maingocdieu.SportShop.entity.Order;
 import com.maingocdieu.SportShop.entity.Product;
 import com.maingocdieu.SportShop.entity.ProductNoteId;
 import com.maingocdieu.SportShop.entity.User;
@@ -34,7 +38,17 @@ public class PhieuNhapImpl implements IPhieuNhapService {
 	@Autowired 
 	ProductReponsitory productRepository;
 	
+	
+	
 	public GoodsReceivedNote InsertPhieuNhap(PhieuNhapDto phieuNhapDto) {
+		
+			for (int i = 0; i < phieuNhapDto.getListPhieuNhap().size(); i++) {
+		        for (int j = 0; j < phieuNhapDto.getListPhieuNhap().size(); j++) {
+		            if (phieuNhapDto.getListPhieuNhap().get(i).getProductId() == phieuNhapDto.getListPhieuNhap().get(j).getProductId() && i != j) {
+		                return null;
+		            }
+		        }
+		    }
 			float tongGia =  0f;
 			GoodsReceivedNote phieuNhap =new  GoodsReceivedNote();
 			phieuNhap.setDateWrite(phieuNhapDto.getNgayTao());
@@ -64,16 +78,36 @@ public class PhieuNhapImpl implements IPhieuNhapService {
 				}
 				goDetail.setDeveloperProjectId(composeKey);
 				chitietRepository.save(goDetail);
-			}
 			
+			}
 			
 			return phieuNhap;
 	}
 	
+	
+	
 	public GoodsReceivedNote GetChiTietPhieuPhap(Long id) {
-		Long a =(long) 25;
-		return phieunhapRepository.findById(a).get() ;
+		
+		return phieunhapRepository.findById(id).get() ;
 
+	}
+
+
+
+	@Override
+	public GoodsReceivedNote updatePN(UpdatePNDto update) {
+		GoodsReceivedNote a =  GetChiTietPhieuPhap(update.getId());
+		for(GoodsReceivedNoteDetail b: a.getProducts()) {
+			if(b.getDeveloperProjectId().getProductId() == update.getOldProductId()) {
+				chitietRepository.delete(b);
+				b.getDeveloperProjectId().setProductId(update.getProductId());
+				b.setProduct(productRepository.findById(update.getProductId()).get());
+				b.setAmount(update.getAmount());
+				b.setPrice(update.getPrice());
+				chitietRepository.save(b);
+			}
+		}
+		return a;
 	}
 
 }

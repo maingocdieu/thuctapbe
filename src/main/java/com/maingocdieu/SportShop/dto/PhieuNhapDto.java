@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 public class PhieuNhapDto {
-
+	private Long pnId;
 	private Long userId;
 	private List<PhieuNhapDetailDto> listPhieuNhap;
 	private Date ngayTao;	

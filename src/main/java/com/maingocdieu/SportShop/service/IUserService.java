@@ -12,7 +12,7 @@ import com.maingocdieu.SportShop.entity.User;
 public interface IUserService {
 //  List<User> findByUsername(String userName);
 
-  User updateUser(long id, User user);
+  User updateUser(long id, UserDto user);
 
   Boolean deleteUserById(List<Long> ids);
 
@@ -29,6 +29,11 @@ public interface IUserService {
   public List<User> findByCriteria(UserDto userDto);
   
   public Page<User> findPageUser(UserDto userDto);
+  
+  Page<User> findAll(UserDto productDto);
+  
+  
+  
 
 
 

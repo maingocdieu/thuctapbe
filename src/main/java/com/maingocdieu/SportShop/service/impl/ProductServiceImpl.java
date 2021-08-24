@@ -97,15 +97,10 @@ public class ProductServiceImpl implements IProductService {
     }
   }
 
-//  @Override
-//  public Page<Product> findPageProduct(ProductDto productDto) {
-//    Pageable firstPageWithTwoElements = PageRequest.of(productDto.getPage(), 10);
-//    return productRespository.findAllUserWithPagination(productDto.getNameProduct(),productDto.getCategoryId(),productDto.getGiaBanRa(),firstPageWithTwoElements);
-//  }
 
 @Override
 public Page<Product> findAll(ProductDto productDto) {
-	Pageable pageable = PageRequest.of(productDto.getPage(), 10);
+	Pageable pageable = PageRequest.of(productDto.getPage(), 20);
 	return  productRespository.findAll(pageable);
 }
 
@@ -122,9 +117,13 @@ public List<Product> findAll() {
 }
 
 @Override
-public Page<Product> findPageProduct(ProductDto productDto) {
-	// TODO Auto-generated method stub
-	return null;
+public Page<Product> findPageProduct(String keyword) {
+	Pageable pageable = PageRequest.of(0, 10);
+	Page<Product> a =productRespository.findByNameProductContaining(keyword, pageable);
+	return a;
 }
+
+
+
 
 }

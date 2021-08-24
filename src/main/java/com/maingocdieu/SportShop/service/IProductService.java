@@ -19,7 +19,7 @@ public interface IProductService {
   
   Product findById(Long id);
   
-  public Page<Product> findPageProduct(ProductDto productDto);
+  public Page<Product> findPageProduct(String keyword);
   
   public Page<Product> findAll(ProductDto productDto) ;
   

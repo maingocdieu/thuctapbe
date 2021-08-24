@@ -14,10 +14,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.maingocdieu.SportShop.dto.OderDetailDto;
 import com.maingocdieu.SportShop.dto.PhieuNhapDto;
 import com.maingocdieu.SportShop.dto.ProductDto;
+import com.maingocdieu.SportShop.dto.UpdatePNDto;
+import com.maingocdieu.SportShop.dto.UpdateStatus;
+import com.maingocdieu.SportShop.entity.GoodsReceivedNote;
+import com.maingocdieu.SportShop.entity.GoodsReceivedNoteDetail;
 import com.maingocdieu.SportShop.entity.Product;
+import com.maingocdieu.SportShop.entity.ProductNoteId;
 import com.maingocdieu.SportShop.entity.User;
+import com.maingocdieu.SportShop.payload.reponse.MessageResponse;
+import com.maingocdieu.SportShop.repository.ChiTietPhieuNhapRepository;
+import com.maingocdieu.SportShop.repository.PhieuNhapRepository;
+import com.maingocdieu.SportShop.service.IOderService;
 import com.maingocdieu.SportShop.service.IPhieuNhapService;
 import com.maingocdieu.SportShop.service.IProductService;
 
@@ -32,6 +42,19 @@ public class ProductRestController {
   
   @Autowired 
   IPhieuNhapService phieunhapSerice;
+  
+
+  @Autowired
+  private PhieuNhapRepository phieuNhapRespository;
+  
+  @Autowired
+  IOderService orderService;
+  
+  @Autowired
+  PhieuNhapRepository pnRepository;
+  @Autowired
+  ChiTietPhieuNhapRepository ctpn;
+  
   
 
   @PostMapping()
@@ -69,12 +92,12 @@ public class ProductRestController {
     return ResponseEntity.ok(currentProduct);
   }
 
-  @PostMapping("/test")
-  public ResponseEntity<Page<Product>> finPagination(@RequestBody ProductDto productDto) {
-    Page<Product> response = productService.findPageProduct(productDto);
-    return new ResponseEntity<Page<Product>>(response, HttpStatus.OK);
-  }
-  
+//  @PostMapping("/test")
+//  public ResponseEntity<Page<Product>> finPagination(@RequestBody ProductDto productDto) {
+//    Page<Product> response = productService.findPageProduct(productDto);
+//    return new ResponseEntity<Page<Product>>(response, HttpStatus.OK);
+//  }
+//  
   @PostMapping("/getPageProduct")
   public ResponseEntity<Page<Product>> getPage(@RequestBody ProductDto productDto) {
     Page<Product> response = productService.findAll(productDto);
@@ -96,15 +119,116 @@ public class ProductRestController {
   
   @PostMapping("/insertPhieuNhap")
   public ResponseEntity<?> insertaProducts(@RequestBody PhieuNhapDto phieuNhapDto) {
-	  PhieuNhapDto a = phieuNhapDto;
-	  phieunhapSerice.InsertPhieuNhap(phieuNhapDto);
-	  return ResponseEntity.ok(a);
+	 
+	  GoodsReceivedNote a =  phieunhapSerice.InsertPhieuNhap(phieuNhapDto);
+		  if (a== null) {
+				return ResponseEntity
+						.badRequest()
+						.body(new MessageResponse("Sản phẩm đã thuộc chi tiết này"));
+			}
+		  return ResponseEntity.ok(a);
   }
   
-  @GetMapping("/test2")
-  public ResponseEntity<?> inasertaProducts() {
-	  System.out.println("Dadada");
-	  return ResponseEntity.ok(phieunhapSerice.GetChiTietPhieuPhap(12L));
+  @GetMapping("/getPhieuNhapById/{id}")
+  public ResponseEntity<?> getPhieuNhapById(@PathVariable("id") Long id) {
+	  return ResponseEntity.ok(phieunhapSerice.GetChiTietPhieuPhap(id));
+  }	
+  
+  @GetMapping("/check/{id}")
+  public ResponseEntity<?> checkProductIsPhieuNhap(@PathVariable("id") Long id) {
+	return ResponseEntity.ok(phieuNhapRespository.demsoLUong(id)); 
+	  
   }
   
+  @PostMapping("/checkout")
+  public ResponseEntity<?> checkOutProductIsPhieuNhap(@RequestBody OderDetailDto orderDetailDto) {
+	return ResponseEntity.ok(orderService.inserOder(orderDetailDto)); 
+	  
+  }
+  
+  @GetMapping("/getDetailOder")
+  public ResponseEntity<?> getDetailOder() {
+	return ResponseEntity.ok(orderService.findById(3L)); 
+	  
+  }
+  
+  @GetMapping("/getAllOder")
+  public ResponseEntity<?> getAllOder() {
+	  System.out.println("Dadadada");
+	return ResponseEntity.ok(orderService.getAllOrder()); 
+	  
+  }
+  
+  @GetMapping("/getPhieuNhap")
+  public ResponseEntity<?> getPhieuNhap() {
+	return ResponseEntity.ok(phieuNhapRespository.findAll()); 
+	  
+  }
+  
+  
+  @PostMapping("/updatechitietpn")
+  public ResponseEntity<?> updatechitietpn(@RequestBody UpdatePNDto update) {
+	return ResponseEntity.ok(phieunhapSerice.updatePN(update)); 
+	  
+  }
+  
+  
+
+  @PostMapping("/deletepn")
+  public ResponseEntity<?> deletePn(@RequestBody Long id) {
+	  phieuNhapRespository.deleteById(id);
+	  return ResponseEntity.ok(true); 
+	  
+  }
+  
+  
+  
+  @PostMapping("/deleteChiTietPn")
+  public ResponseEntity<?> deleteChiTietPn(@RequestBody UpdatePNDto update) {
+	  GoodsReceivedNote a =  phieunhapSerice.GetChiTietPhieuPhap(update.getId());
+		for(GoodsReceivedNoteDetail b: a.getProducts()) {
+			if(b.getDeveloperProjectId().getProductId() == update.getOldProductId()) {
+				ctpn.delete(b);
+			}
+		}
+	  return ResponseEntity.ok(true); 
+	  
+  }
+  
+  @PostMapping("/insertChiTietPN")
+  public ResponseEntity<?> insertctpn(@RequestBody UpdatePNDto update) {
+	  	GoodsReceivedNoteDetail s = new GoodsReceivedNoteDetail();
+	  	s.setAmount(update.getAmount());
+	  	s.setPrice(update.getPrice());
+	  	ProductNoteId m = new ProductNoteId();
+	  	m.setGoodsNoteId(update.getId());
+	  	m.setProductId(update.getProductId());
+	  	s.setDeveloperProjectId(m);
+	  	GoodsReceivedNote a =  phieunhapSerice.GetChiTietPhieuPhap(update.getId());
+	  	s.setGoodsReceivedNote(a);
+	  	s.setProduct(productService.findById(update.getProductId()));
+	  	ctpn.save(s);
+	  return ResponseEntity.ok(true); 
+	  
+  }
+  
+  
+  @PostMapping("/updateStatus")
+  public ResponseEntity<?> updateStatusOrder(@RequestBody UpdateStatus updateStatus ) {
+	  return ResponseEntity.ok(orderService.UpdateStatus(updateStatus));
+	  
+  }
+  
+  
+  
+  @PostMapping("/deleteOrder")
+  public ResponseEntity<?> deleteOrder(@RequestBody Long id ) {
+	  return ResponseEntity.ok( orderService.DeleteOrder(id));
+	  
+  }
+  
+  @GetMapping("/search/{keyword}")
+  public ResponseEntity<?> searh(@PathVariable("keyword") String keyword) {
+	return ResponseEntity.ok(productService.findPageProduct(keyword)); 
+  }
 }

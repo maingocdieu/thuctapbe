@@ -16,4 +16,6 @@ public interface ICategoryService {
   Category insertCategory(Category category);
 
   List<Category> findAllCategory();
+  
+  Boolean DeleteCateGory(Long id);
 }

@@ -20,5 +20,7 @@ public interface ProductReponsitory extends  PagingAndSortingRepository<Product,
 
   
   Page<Product> findByCategoryId(Long id, Pageable pageable);
+  
+  Page<Product> findByNameProductContaining( String name, Pageable pageable);
 
 }

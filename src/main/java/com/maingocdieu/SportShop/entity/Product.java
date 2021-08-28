@@ -1,16 +1,14 @@
 package com.maingocdieu.SportShop.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -43,14 +41,10 @@ public class Product extends BaseEntity {
   @JoinColumn(name = "category_id")
   private Category category;
 
-  @OneToMany(mappedBy = "order")
-  @JsonIgnore
-  List<OderDetail> orderDetails = new ArrayList<OderDetail>();
   
-
-  @OneToMany(mappedBy = "goodsReceivedNote")
-  @JsonIgnore
-  private List<GoodsReceivedNoteDetail> goodsReceivedNote;
-
+  
+  @OneToMany(cascade= CascadeType.ALL)
+  @JoinColumn(name="idProduct")
+  List<ProductDetail> productDetail;
 
 }

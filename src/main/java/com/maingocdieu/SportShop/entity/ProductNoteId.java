@@ -17,9 +17,9 @@ public class ProductNoteId implements Serializable{
 
 	  private static final long serialVersionUID = 1L;
 
-	  @Column(name = "Product_id")
+	  @Column(name = "productdetailid")
 	  private Long  productId;
 
-	  @Column(name = "note_id")
+	  @Column(name = "noteid")
 	  private Long goodsNoteId;
 }

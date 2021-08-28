@@ -10,9 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.maingocdieu.SportShop.converter.UserConverter;
-import com.maingocdieu.SportShop.dto.ProductDto;
 import com.maingocdieu.SportShop.dto.UserDto;
-import com.maingocdieu.SportShop.entity.Product;
 import com.maingocdieu.SportShop.entity.User;
 import com.maingocdieu.SportShop.repository.RoleRepository;
 import com.maingocdieu.SportShop.repository.UserRepository;
@@ -31,10 +29,6 @@ public class UserServiceImpl implements IUserService {
   @Autowired
   private UserConverter userConverter;
 
-//  @Override
-//  public List<User> findByUsername(String userName) {
-//    return userReponsitory.findByUsername(userName);
-//  }
 
   @Override
   public User updateUser(long id, UserDto userEntity) {

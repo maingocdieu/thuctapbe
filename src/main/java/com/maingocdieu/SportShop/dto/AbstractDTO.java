@@ -16,7 +16,6 @@ public class AbstractDTO<T> implements Serializable {
     private String createdBy;
     private Date modifiedDate;
     private String modifiedBy;
-    private Boolean isDeleted;
     private int page = 1;
     private int maxPageItems = 5;
     private int totalItems = 0;

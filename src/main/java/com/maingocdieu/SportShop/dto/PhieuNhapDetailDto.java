@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class PhieuNhapDetailDto {
-	private Long productId;
+	private Long productDetailId;
 	private Float price;
 	private Integer amount;
 }

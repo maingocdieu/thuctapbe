@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.maingocdieu.SportShop.dto.OderDetailDto;
 import com.maingocdieu.SportShop.dto.PhieuNhapDto;
 import com.maingocdieu.SportShop.dto.ProductDto;
 import com.maingocdieu.SportShop.dto.UpdatePNDto;
@@ -27,6 +26,7 @@ import com.maingocdieu.SportShop.entity.User;
 import com.maingocdieu.SportShop.payload.reponse.MessageResponse;
 import com.maingocdieu.SportShop.repository.ChiTietPhieuNhapRepository;
 import com.maingocdieu.SportShop.repository.PhieuNhapRepository;
+import com.maingocdieu.SportShop.repository.ProductDetailRepository;
 import com.maingocdieu.SportShop.service.IOderService;
 import com.maingocdieu.SportShop.service.IPhieuNhapService;
 import com.maingocdieu.SportShop.service.IProductService;
@@ -52,11 +52,14 @@ public class ProductRestController {
   
   @Autowired
   PhieuNhapRepository pnRepository;
+  
   @Autowired
   ChiTietPhieuNhapRepository ctpn;
   
+	@Autowired
+	ProductDetailRepository productDetailRepo;
+	
   
-
   @PostMapping()
   public ResponseEntity<?> insertProducts(@RequestBody ProductDto productDto) {
     var rs = productService.insertProductDto(productDto);
@@ -92,12 +95,6 @@ public class ProductRestController {
     return ResponseEntity.ok(currentProduct);
   }
 
-//  @PostMapping("/test")
-//  public ResponseEntity<Page<Product>> finPagination(@RequestBody ProductDto productDto) {
-//    Page<Product> response = productService.findPageProduct(productDto);
-//    return new ResponseEntity<Page<Product>>(response, HttpStatus.OK);
-//  }
-//  
   @PostMapping("/getPageProduct")
   public ResponseEntity<Page<Product>> getPage(@RequestBody ProductDto productDto) {
     Page<Product> response = productService.findAll(productDto);
@@ -131,7 +128,7 @@ public class ProductRestController {
   
   @GetMapping("/getPhieuNhapById/{id}")
   public ResponseEntity<?> getPhieuNhapById(@PathVariable("id") Long id) {
-	  return ResponseEntity.ok(phieunhapSerice.GetChiTietPhieuPhap(id));
+	  return ResponseEntity.ok(phieunhapSerice.GetChiTietPhieuPhapReponse(id));
   }	
   
   @GetMapping("/check/{id}")
@@ -140,27 +137,15 @@ public class ProductRestController {
 	  
   }
   
-  @PostMapping("/checkout")
-  public ResponseEntity<?> checkOutProductIsPhieuNhap(@RequestBody OderDetailDto orderDetailDto) {
-	return ResponseEntity.ok(orderService.inserOder(orderDetailDto)); 
-	  
-  }
   
-  @GetMapping("/getDetailOder")
-  public ResponseEntity<?> getDetailOder() {
-	return ResponseEntity.ok(orderService.findById(3L)); 
-	  
-  }
-  
-  @GetMapping("/getAllOder")
-  public ResponseEntity<?> getAllOder() {
-	return ResponseEntity.ok(orderService.getAllOrder()); 
-	  
-  }
   
   @GetMapping("/getPhieuNhap")
   public ResponseEntity<?> getPhieuNhap() {
-	return ResponseEntity.ok(phieuNhapRespository.findAll()); 
+	 List<GoodsReceivedNote> a =phieuNhapRespository.findAll();
+	 for (GoodsReceivedNote goodsReceivedNote : a) {
+		 goodsReceivedNote.setProducts(null);
+	}
+	return ResponseEntity.ok(a); 
 	  
   }
   
@@ -175,9 +160,15 @@ public class ProductRestController {
 
   @PostMapping("/deletepn")
   public ResponseEntity<?> deletePn(@RequestBody Long id) {
-	  phieuNhapRespository.deleteById(id);
-	  return ResponseEntity.ok(true); 
-	  
+	  GoodsReceivedNote a = phieuNhapRespository.findById(id).get();
+	  if(a.getProducts().size() >0) {
+		  return ResponseEntity.ok(false); 
+	  }
+	  else {
+		  phieuNhapRespository.deleteById(id);
+		  return ResponseEntity.ok(true); 
+	  }
+	 
   }
   
   
@@ -186,7 +177,7 @@ public class ProductRestController {
   public ResponseEntity<?> deleteChiTietPn(@RequestBody UpdatePNDto update) {
 	  GoodsReceivedNote a =  phieunhapSerice.GetChiTietPhieuPhap(update.getId());
 		for(GoodsReceivedNoteDetail b: a.getProducts()) {
-			if(b.getDeveloperProjectId().getProductId() == update.getOldProductId()) {
+			if(b.getProductNoteId().getProductId() == update.getOldProductId()) {
 				ctpn.delete(b);
 			}
 		}
@@ -202,10 +193,10 @@ public class ProductRestController {
 	  	ProductNoteId m = new ProductNoteId();
 	  	m.setGoodsNoteId(update.getId());
 	  	m.setProductId(update.getProductId());
-	  	s.setDeveloperProjectId(m);
+	  	s.setProductNoteId(m);
 	  	GoodsReceivedNote a =  phieunhapSerice.GetChiTietPhieuPhap(update.getId());
 	  	s.setGoodsReceivedNote(a);
-	  	s.setProduct(productService.findById(update.getProductId()));
+	  	s.setProductDetail(productDetailRepo.findById(update.getProductId()).get());
 	  	ctpn.save(s);
 	  return ResponseEntity.ok(true); 
 	  
@@ -227,7 +218,7 @@ public class ProductRestController {
   }
   
   @GetMapping("/search/{keyword}")
-  public ResponseEntity<?> searh(@PathVariable("keyword") String keyword) {
+  public ResponseEntity<?> search(@PathVariable("keyword") String keyword) {
 	return ResponseEntity.ok(productService.findPageProduct(keyword)); 
   }
 }

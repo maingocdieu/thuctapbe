@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.maingocdieu.SportShop.dto.UserDto;
-import com.maingocdieu.SportShop.entity.Product;
 import com.maingocdieu.SportShop.entity.User;
 import com.maingocdieu.SportShop.repository.UserRepository;
 import com.maingocdieu.SportShop.service.impl.UserServiceImpl;

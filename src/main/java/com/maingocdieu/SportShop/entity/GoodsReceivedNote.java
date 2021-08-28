@@ -61,7 +61,4 @@ public class GoodsReceivedNote extends BaseEntity {
 		this.user = user;
 	}
 	
-	
-
-	
 }

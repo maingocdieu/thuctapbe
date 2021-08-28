@@ -14,6 +14,7 @@ import com.maingocdieu.SportShop.converter.ProductConverter;
 import com.maingocdieu.SportShop.dto.ProductDto;
 import com.maingocdieu.SportShop.entity.Category;
 import com.maingocdieu.SportShop.entity.Product;
+import com.maingocdieu.SportShop.entity.ProductDetail;
 import com.maingocdieu.SportShop.file.util.UploadFileUtils;
 import com.maingocdieu.SportShop.repository.CategoryRepository;
 import com.maingocdieu.SportShop.repository.ProductReponsitory;
@@ -91,6 +92,12 @@ public class ProductServiceImpl implements IProductService {
   public Product findById(Long id) {
     Optional<Product> product = productRespository.findById(id);
     if (product.isPresent()) {
+    	
+    	Product a = product.get();
+    	
+    	for (ProductDetail iterable_element : a.getProductDetail()) {
+    		iterable_element.setProduct(null);
+		}
       return product.get();
     } else {
       return null;
@@ -101,25 +108,50 @@ public class ProductServiceImpl implements IProductService {
 @Override
 public Page<Product> findAll(ProductDto productDto) {
 	Pageable pageable = PageRequest.of(productDto.getPage(), 20);
-	return  productRespository.findAll(pageable);
+	
+	Page<Product> pageProduct = productRespository.findAll(pageable);
+	
+	for (Product product : pageProduct) {
+		
+		for (ProductDetail productdetail : product.getProductDetail()) {
+			productdetail.setProduct(null);
+		}
+		
+	}
+	return  pageProduct;
 }
 
 @Override
 public Page<Product> findAllByCategorys(Long id) {
 	Pageable pageable = PageRequest.of(0, 10);
-	return productRespository.findByCategoryId(id,pageable);
+	
+	Page<Product> pageProduct =productRespository.findByCategoryId(id,pageable);
+	for (Product product : pageProduct) {
+		for (ProductDetail productdetail : product.getProductDetail()) {
+			productdetail.setProduct(null);
+		}
+	}
+	return pageProduct;
 }
 
 @Override
 public List<Product> findAll() {
+	List<Product> products = (List<Product>) productRespository.findAll();
 	
-	return (List<Product>) productRespository.findAll();
+	for (Product product : products) {
+		product.setProductDetail(null);
+	}
+	return products;
 }
 
 @Override
 public Page<Product> findPageProduct(String keyword) {
 	Pageable pageable = PageRequest.of(0, 10);
 	Page<Product> a =productRespository.findByNameProductContaining(keyword, pageable);
+	
+	for (Product product : a) {
+		product.setProductDetail(null);
+	}
 	return a;
 }
 

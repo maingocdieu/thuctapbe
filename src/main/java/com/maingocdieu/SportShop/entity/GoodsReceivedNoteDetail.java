@@ -9,18 +9,20 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Data;
+
 @Entity
 @Table(name = "GoodsReceivedNoteDetail")
-
+@Data
 public class GoodsReceivedNoteDetail {
 
 	
 	  	@EmbeddedId
-	    private ProductNoteId developerProjectId;
+	    private ProductNoteId productNoteId;
 	 
 	    @ManyToOne
 	    @MapsId("productId")
-	    private Product product;
+	    private ProductDetail productDetail;
 	 
 	    @ManyToOne
 	    @MapsId("goodsNoteId")
@@ -33,47 +35,7 @@ public class GoodsReceivedNoteDetail {
 	    @Column
 	    private Float price;
 
-		public ProductNoteId getDeveloperProjectId() {
-			return developerProjectId;
-		}
-
-		public void setDeveloperProjectId(ProductNoteId developerProjectId) {
-			this.developerProjectId = developerProjectId;
-		}
-
-		public Product getProduct() {
-			return product;
-		}
-
-		public void setProduct(Product product) {
-			this.product = product;
-		}
-
-		public GoodsReceivedNote getGoodsReceivedNote() {
-			return goodsReceivedNote;
-		}
-
-		public void setGoodsReceivedNote(GoodsReceivedNote goodsReceivedNote) {
-			this.goodsReceivedNote = goodsReceivedNote;
-		}
-
-		public Integer getAmount() {
-			return amount;
-		}
-
-		public void setAmount(Integer amount) {
-			this.amount = amount;
-		}
-
-		public Float getPrice() {
-			return price;
-		}
-
-		public void setPrice(Float price) {
-			this.price = price;
-		}
-	    
-	    
+		
 	 
 	    
 }

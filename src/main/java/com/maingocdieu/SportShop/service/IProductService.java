@@ -11,7 +11,7 @@ public interface IProductService {
 
   ProductDto updateProduct(long id, ProductDto productDto);
 
-  Boolean deleteProductById(List<Long> ids);
+  Boolean deleteProductById(Long id);
 
   Product insertProduct(Product product);
   

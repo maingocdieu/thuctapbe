@@ -16,6 +16,7 @@ import lombok.Data;
 @Data
 public class OderDetail {
   @EmbeddedId
+  @JsonIgnore
   private ProductOrderId productOrderId;
   
   @ManyToOne
@@ -24,8 +25,8 @@ public class OderDetail {
   private Order order;
 
   @ManyToOne
-  @MapsId("productId")
-  private Product product;
+  @MapsId("productDetailId")
+  private ProductDetail productDetail;
 
   @Column
   private int quantity;

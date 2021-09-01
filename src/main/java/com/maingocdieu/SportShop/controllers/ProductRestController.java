@@ -78,12 +78,8 @@ public class ProductRestController {
   }
 
   @PostMapping("/delete")
-  public ResponseEntity<User> deleteUser(@RequestBody List<Long> ids) {
-    Boolean temp = productService.deleteProductById(ids);
-    if (Boolean.TRUE.equals(temp)) {
-      return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
-    }
-    return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+  public ResponseEntity<?> deleteUser(@RequestBody Long id) {
+   return ResponseEntity.ok(productService.deleteProductById(id)) ;
   }
 
   @GetMapping("/{id}")
@@ -137,8 +133,6 @@ public class ProductRestController {
 	  
   }
   
-  
-  
   @GetMapping("/getPhieuNhap")
   public ResponseEntity<?> getPhieuNhap() {
 	 List<GoodsReceivedNote> a =phieuNhapRespository.findAll();
@@ -172,12 +166,11 @@ public class ProductRestController {
   }
   
   
-  
   @PostMapping("/deleteChiTietPn")
   public ResponseEntity<?> deleteChiTietPn(@RequestBody UpdatePNDto update) {
 	  GoodsReceivedNote a =  phieunhapSerice.GetChiTietPhieuPhap(update.getId());
 		for(GoodsReceivedNoteDetail b: a.getProducts()) {
-			if(b.getProductNoteId().getProductId() == update.getOldProductId()) {
+			if(b.getProductNoteId().getProductId().equals(update.getOldProductId()) ) {
 				ctpn.delete(b);
 			}
 		}
@@ -221,4 +214,10 @@ public class ProductRestController {
   public ResponseEntity<?> search(@PathVariable("keyword") String keyword) {
 	return ResponseEntity.ok(productService.findPageProduct(keyword)); 
   }
+  
+  @GetMapping("/getlistpn/{page}")
+  public ResponseEntity<?> getPagePn(@PathVariable("page") int page) {
+	return ResponseEntity.ok(phieunhapSerice.getListPhieuNhap(page)); 
+  }
+  
 }

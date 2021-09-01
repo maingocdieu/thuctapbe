@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.maingocdieu.SportShop.dto.ProductDetailDto;
 import com.maingocdieu.SportShop.dto.UpdateProductDetailDto;
 import com.maingocdieu.SportShop.repository.ProductDetailRepository;
-import com.maingocdieu.SportShop.service.impl.ProductDetailServiceImpl;
+import com.maingocdieu.SportShop.service.IProductDetail;
 
 @RestController()
 @RequestMapping("/api/productdetail")
@@ -21,22 +21,27 @@ public class ProductDetailController {
 
 	@Autowired
 	ProductDetailRepository test;
-	
+
 	@Autowired
-	ProductDetailServiceImpl productDetailImpl;
-	 @PostMapping()
-	  public ResponseEntity<?> insertSize(@RequestBody List<ProductDetailDto> productDetailDto) {
-	    return ResponseEntity.ok(productDetailImpl.insert(productDetailDto));
-	  }
-	 
-	 
-	 @GetMapping()
-	  public ResponseEntity<?> insertSizes() {
-	    return ResponseEntity.ok(productDetailImpl.getProductDetail());
-	  }
-	 
-	 @PostMapping("/update")
-	  public ResponseEntity<?> updateProductDetail(@RequestBody UpdateProductDetailDto productDetailDto) {
-	    return ResponseEntity.ok(productDetailImpl.updateProductDetail(productDetailDto));
-	  }
+	IProductDetail productDetailImpl;
+
+	@PostMapping()
+	public ResponseEntity<?> insertSize(@RequestBody List<ProductDetailDto> productDetailDto) {
+		return ResponseEntity.ok(productDetailImpl.insert(productDetailDto));
+	}
+
+	@GetMapping()
+	public ResponseEntity<?> insertSizes() {
+		return ResponseEntity.ok(productDetailImpl.getProductDetail());
+	}
+
+	@PostMapping("/update")
+	public ResponseEntity<?> updateProductDetail(@RequestBody UpdateProductDetailDto productDetailDto) {
+		return ResponseEntity.ok(productDetailImpl.updateProductDetail(productDetailDto));
+	}
+
+	@PostMapping("/delete")
+	public ResponseEntity<?> deleteProductDetail(@RequestBody Long id) {
+		return ResponseEntity.ok(productDetailImpl.deleteProductDetail(id));
+	}
 }

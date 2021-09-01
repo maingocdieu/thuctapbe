@@ -9,18 +9,14 @@ import org.springframework.data.repository.query.Param;
 import com.maingocdieu.SportShop.entity.Product;
 
 public interface ProductReponsitory extends  PagingAndSortingRepository<Product, Long> {
-  @Query(
-      value = "SELECT distinct u"
-          + " FROM Product u"
-          + "   JOIN u.category category"
-          + " WHERE (:nameProduct is null OR u.nameProduct like :nameProduct)"
-          + "  AND (:category is null OR category.id = :category)")
-  Page<Product> findAllUserWithPagination(@Param("nameProduct") String nameProduct,
-      @Param("category") Long category, Pageable pageable);
+
 
   
   Page<Product> findByCategoryId(Long id, Pageable pageable);
   
   Page<Product> findByNameProductContaining( String name, Pageable pageable);
+  
+  
+  
 
 }

@@ -47,7 +47,6 @@ public class ProductDetailServiceImpl implements IProductDetail {
 	public Boolean insert(List<ProductDetailDto> productdetaildto) {
 
 		List<ProductDetail> listProductDetail = productDetailRepository.findAll();
-
 		for (ProductDetailDto temp : productdetaildto) {
 			for (ProductDetail productDetail : listProductDetail) {
 				Long a = temp.getColorId();
@@ -56,7 +55,7 @@ public class ProductDetailServiceImpl implements IProductDetail {
 				Long d = temp.getSizeId();
 				if (productDetail.getColor().getId().equals(a) && productDetail.getSupplier().getId().equals(b)
 						&& productDetail.getProduct().getId().equals(c) && productDetail.getSize().getId().equals(d)) {
-					return null;
+					return false;
 				}
 			}
 		}
@@ -93,7 +92,21 @@ public class ProductDetailServiceImpl implements IProductDetail {
 	@Override
 	public Boolean updateProductDetail(UpdateProductDetailDto update) {
 
+		List<ProductDetail> listProductDetail = productDetailRepository.findAll();
 		ProductDetail test = productDetailRepository.findById(update.getOldProducDetailtId()).get();
+		Long a = update.getColorId();
+		Long b = update.getSupllierId();
+		Long c = update.getProductId();
+		Long d = update.getSizeId();
+		if (test.getColor().getId().equals(a) == false || test.getSupplier().getId().equals(b)  == false ||
+				 test.getProduct().getId().equals(c) == false || test.getSize().getId().equals(d) == false) {
+			for (ProductDetail productDetail : listProductDetail) {
+				if (productDetail.getColor().getId().equals(a) && productDetail.getSupplier().getId().equals(b)
+						&& productDetail.getProduct().getId().equals(c) && productDetail.getSize().getId().equals(d)) {
+					return false;
+				}
+			}
+		}
 		Product prodduct = productRepository.findById(update.getProductId()).get();
 		Color color = colorRepository.findById(update.getColorId()).get();
 		Size size = sizeRepository.findById(update.getSizeId()).get();
@@ -111,6 +124,22 @@ public class ProductDetailServiceImpl implements IProductDetail {
 	public Boolean insertProductDetail(ProductDetailDto productdetaildto) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Boolean deleteProductDetail(Long id) {
+		ProductDetail productDetail = productDetailRepository.findById(id).get();
+		
+		if (productDetail.getGoodsReceivedNote().size() > 0) {
+			return false;
+		}
+		if (productDetail.getOrderDetails().size() > 0) {
+			return false;
+		}
+
+		productDetailRepository.deleteById(id);
+		
+		return true;
 	}
 
 }

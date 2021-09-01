@@ -1,8 +1,12 @@
 package com.maingocdieu.SportShop.service.impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.maingocdieu.SportShop.converter.PhieuNhapResponseConverter;
@@ -12,7 +16,6 @@ import com.maingocdieu.SportShop.dto.PhieuNhapResponseDto;
 import com.maingocdieu.SportShop.dto.UpdatePNDto;
 import com.maingocdieu.SportShop.entity.GoodsReceivedNote;
 import com.maingocdieu.SportShop.entity.GoodsReceivedNoteDetail;
-import com.maingocdieu.SportShop.entity.Product;
 import com.maingocdieu.SportShop.entity.ProductDetail;
 import com.maingocdieu.SportShop.entity.ProductNoteId;
 import com.maingocdieu.SportShop.entity.User;
@@ -48,8 +51,8 @@ public class PhieuNhapImpl implements IPhieuNhapService {
 
 		for (int i = 0; i < phieuNhapDto.getListPhieuNhap().size(); i++) {
 			for (int j = 0; j < phieuNhapDto.getListPhieuNhap().size(); j++) {
-				if (phieuNhapDto.getListPhieuNhap().get(i).getProductDetailId() == phieuNhapDto.getListPhieuNhap()
-						.get(j).getProductDetailId() && i != j) {
+				if (phieuNhapDto.getListPhieuNhap().get(i).getProductDetailId().equals( phieuNhapDto.getListPhieuNhap()
+						.get(j).getProductDetailId()) && i != j) {
 					return null;
 				}
 			}
@@ -94,9 +97,9 @@ public class PhieuNhapImpl implements IPhieuNhapService {
 		PhieuNhapResponseDto pndto = pnConverter.convertToDto(phieunhapRepository.findById(id).get());
 
 		for (GoodsReceivedNoteDetail pnDetail : pndto.getProducts()) {
-			Product a = productRepository.findById(pnDetail.getProductNoteId().getProductId()).get();
-			a.setProductDetail(null);
-			pnDetail.getProductDetail().setProduct(a);
+
+			
+			pnDetail.getProductDetail().getProduct().setProductDetail(null);;
 		}
 		return pndto;
 	}
@@ -106,21 +109,31 @@ public class PhieuNhapImpl implements IPhieuNhapService {
 	}
 
 	@Override
-	public GoodsReceivedNote updatePN(UpdatePNDto update) {
+	public Boolean updatePN(UpdatePNDto update) {
 		GoodsReceivedNote a = GetChiTietPhieuPhap(update.getId());
 		for (GoodsReceivedNoteDetail b : a.getProducts()) {
-			if (b.getProductNoteId().getProductId() == update.getOldProductId()) {
+			if (b.getProductNoteId().getProductId().equals(update.getOldProductId())) {
 				chitietRepository.delete(b);
 				b.getProductNoteId().setProductId(update.getProductId());
 				b.setProductDetail(productDetailRepository.findById(update.getProductId()).get());
 				b.setAmount(update.getAmount());
 				b.setPrice(update.getPrice());
 				chitietRepository.save(b);
+				return true;
 			}
 		}
+		return false;
 		
+	}
+
+	@Override
+	public Page<GoodsReceivedNote> getListPhieuNhap(int soPage) {
+		Pageable pageable = PageRequest.of(soPage, 3);
+		Page<GoodsReceivedNote> a = phieunhapRepository.findAll(pageable);
 		
-		a.getProducts();
+		for (GoodsReceivedNote goodsReceivedNote : a) {
+			 goodsReceivedNote.setProducts(null);
+		}
 		return a;
 	}
 

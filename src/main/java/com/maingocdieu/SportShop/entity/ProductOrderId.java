@@ -15,8 +15,8 @@ public class ProductOrderId implements Serializable{
 
   private static final long serialVersionUID = 1L;
 
-  @Column(name = "Product_id")
-  private Long  productId;
+  @Column(name = "ProductDetail_id")
+  private Long  productDetailId;
 
   @Column(name = "order_id")
   private Long orderId;

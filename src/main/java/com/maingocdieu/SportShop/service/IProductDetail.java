@@ -16,4 +16,6 @@ public interface IProductDetail {
 	Boolean updateProductDetail(UpdateProductDetailDto update);
 	
 	Boolean insertProductDetail(ProductDetailDto productdetaildto);
+	
+	Boolean deleteProductDetail(Long id);
 }

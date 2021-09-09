@@ -22,5 +22,6 @@ public interface IOderService {
 	
 	Page<Order> getPageOrder(int page);
 	
-	
+	List<Order> getOrderByUser(Long id);
+	Boolean cancelOrder(Long id);
 }

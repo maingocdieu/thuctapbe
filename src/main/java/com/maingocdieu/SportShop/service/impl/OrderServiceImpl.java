@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 
 import com.maingocdieu.SportShop.dto.CartDto;
 import com.maingocdieu.SportShop.dto.OderDetailDto;
+import com.maingocdieu.SportShop.dto.OderDto;
 import com.maingocdieu.SportShop.entity.OderDetail;
 import com.maingocdieu.SportShop.entity.Order;
+import com.maingocdieu.SportShop.entity.ProductDetail;
 import com.maingocdieu.SportShop.entity.ProductOrderId;
 import com.maingocdieu.SportShop.repository.OderDetailRepository;
 import com.maingocdieu.SportShop.repository.OderRepository;
@@ -26,19 +28,19 @@ public class OrderServiceImpl implements IOderService {
 
 	@Autowired
 	OderDetailRepository oderDetailRepoitory;
-	
+
 	@Autowired
 	OderRepository oderRepoitory;
-	
+
 	@Autowired
 	UserRepository userRepository;
-	
-	@Autowired 
+
+	@Autowired
 	ProductReponsitory productRepository;
-	
-	@Autowired 
+
+	@Autowired
 	ProductDetailRepository productDetailRepository;
-	
+
 	@Override
 	public Order inserOder(OderDetailDto orderDto) {
 		Order order = new Order();
@@ -48,6 +50,9 @@ public class OrderServiceImpl implements IOderService {
 		order.setTotalPrice(orderDto.getOrder().getTotalPrice());
 		order.setUser(userRepository.findById(orderDto.getUserId()).get());
 		order.setTotalQuantity(orderDto.getOrder().getTotalQuantity());
+		order.setStatus(false);
+		order.setNameUser(orderDto.getOrder().getNameUser());
+		order.setEmail(orderDto.getOrder().getEmail());
 		order.setListOderDetail(null);
 		oderRepoitory.save(order);
 		List<OderDetail> a = new ArrayList<OderDetail>();
@@ -60,40 +65,38 @@ public class OrderServiceImpl implements IOderService {
 			oderDetail.setQuantity(cartDto.getQuantity());
 			oderDetail.setOrder(order);
 			oderDetail.setProductDetail(productDetailRepository.findById(cartDto.getId()).get());
+			ProductDetail m = productDetailRepository.findById(cartDto.getId()).get();
+			m.setSoLuong(m.getSoLuong() - oderDetail.getQuantity());
+			productDetailRepository.save(m);
 			oderDetailRepoitory.save(oderDetail);
 			a.add(oderDetail);
-			
+
 		}
 		order.setListOderDetail(a);
 		oderRepoitory.save(order);
 		order.setListOderDetail(null);
 		return order;
 	}
-	
-	
 
 	@Override
 	public Order findById(Long id) {
-		
-		return oderRepoitory.findById(id).get() ;
+
+		return oderRepoitory.findById(id).get();
 	}
 
 	@Override
 	public List<Order> getAllOrder() {
-		
+
 		List<Order> listOrder = oderRepoitory.findAll();
 		for (Order order : listOrder) {
-			List<OderDetail> listOrderDetail =  order.getListOderDetail();
-			
+			List<OderDetail> listOrderDetail = order.getListOderDetail();
 			for (OderDetail orderDetail : listOrderDetail) {
 				orderDetail.getProductDetail().getProduct().setProductDetail(null);
 			}
 		}
-		
+
 		return listOrder;
 	}
-
-
 
 	@Override
 	public Boolean UpdateStatus(com.maingocdieu.SportShop.dto.UpdateStatus updateStatus) {
@@ -103,30 +106,63 @@ public class OrderServiceImpl implements IOderService {
 		return true;
 	}
 
-
-
 	@Override
 	public Boolean DeleteOrder(Long id) {
 		oderRepoitory.deleteById(id);
 		return true;
 	}
 
-
-
 	@Override
 	public Page<Order> getPageOrder(int page) {
 		Pageable pageable = PageRequest.of(page, 3);
-		 Page<Order> a = oderRepoitory.findAll(pageable);
-		 
-		 for (Order order : a) {
-				List<OderDetail> listOrderDetail =  order.getListOderDetail();
-				
-				for (OderDetail orderDetail : listOrderDetail) {
-					orderDetail.getProductDetail().getProduct().setProductDetail(null);
-				}
+		Page<Order> a = oderRepoitory.findAll(pageable);
+		for (Order order : a) {
+			List<OderDetail> listOrderDetail = order.getListOderDetail();
+			for (OderDetail orderDetail : listOrderDetail) {
+				orderDetail.getProductDetail().getProduct().setProductDetail(null);
 			}
+		}
 		return a;
 	}
 
-	
+	@Override
+	public List<Order> getOrderByUser(Long id) {
+		List<Order> a = oderRepoitory.getOderByUserId(id);
+
+		for (Order order : a) {
+			List<OderDetail> listOrderDetail = order.getListOderDetail();
+			for (OderDetail orderDetail : listOrderDetail) {
+				orderDetail.getProductDetail().getProduct().setProductDetail(null);
+			}
+		}
+		return a;
+
+	}
+
+	@Override
+	public Boolean cancelOrder(Long id) {
+		Order a = oderRepoitory.findById(id).get();
+		if (a.getStatus() != null) {
+			List<OderDetail> b = a.getListOderDetail();
+			for (OderDetail oderDetail : b) {
+				ProductDetail c = oderDetail.getProductDetail();
+				c.setSoLuong(c.getSoLuong() + oderDetail.getQuantity());
+				productDetailRepository.save(c);
+			}
+			a.setStatus(null);
+			oderRepoitory.save(a);
+		} else {
+			List<OderDetail> b = a.getListOderDetail();
+			for (OderDetail oderDetail : b) {
+				ProductDetail c = oderDetail.getProductDetail();
+				c.setSoLuong(c.getSoLuong() - oderDetail.getQuantity());
+				productDetailRepository.save(c);
+			}
+			a.setStatus(false);
+			oderRepoitory.save(a);
+		}
+
+		return null;
+	}
+
 }

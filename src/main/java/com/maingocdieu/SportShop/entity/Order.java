@@ -18,17 +18,25 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper=false)
 public class Order extends BaseEntity {
  
-  @Column(nullable = false)
+  @Column(nullable = false, columnDefinition = "nvarchar(255)")
   private String diaChi;
   
   @Column(nullable = false,columnDefinition = "nvarchar(255)" )
   private String sdt;
   
   @Column
+  private String nameUser;
+  
+  @Column
+  private String email;
+  
+  
+  @Column
   private float totalPrice;
   
   @Column
   private int totalQuantity;
+  
   
   @Column
   private String hinhThucGiaoHang;

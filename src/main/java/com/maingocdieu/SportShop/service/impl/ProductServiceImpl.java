@@ -38,7 +38,7 @@ public class ProductServiceImpl implements IProductService {
 		if (existProduct.isPresent()) {
 			Product product = existProduct.get();
 			product.setNameProduct(productDto.getNameProduct());
-			product.setGiaBanRa(productDto.getGiaBanRa());
+		
 			Category category = categoryRepository.findOneByCode(productDto.getCategoryCode());
 			product.setCategory(category);
 			if (productDto.getBase64() != null) {
@@ -65,7 +65,7 @@ public class ProductServiceImpl implements IProductService {
 		Product product = (Product) productConverter.convertToEntity(productDto);
 		Category category = categoryRepository.findOneByCode(productDto.getCategoryCode());
 		product.setCategory(category);
-		product.setSoLuong(0);
+		product.setStatus(false);
 		if (productDto.getBase64() != null) {
 			String base64Image = productDto.getBase64().split(",")[1];
 			byte[] decodeBase64 = Base64.getDecoder().decode(base64Image.getBytes());
@@ -107,15 +107,11 @@ public class ProductServiceImpl implements IProductService {
 	@Override
 	public Page<Product> findAll(ProductDto productDto) {
 		Pageable pageable = PageRequest.of(productDto.getPage(), 20);
-
 		Page<Product> pageProduct = productRespository.findAll(pageable);
-
 		for (Product product : pageProduct) {
-
 			for (ProductDetail productdetail : product.getProductDetail()) {
 				productdetail.setProduct(null);
 			}
-
 		}
 		return pageProduct;
 	}
@@ -123,7 +119,6 @@ public class ProductServiceImpl implements IProductService {
 	@Override
 	public Page<Product> findAllByCategorys(Long id) {
 		Pageable pageable = PageRequest.of(0, 10);
-
 		Page<Product> pageProduct = productRespository.findByCategoryId(id, pageable);
 		for (Product product : pageProduct) {
 			for (ProductDetail productdetail : product.getProductDetail()) {
@@ -136,7 +131,6 @@ public class ProductServiceImpl implements IProductService {
 	@Override
 	public List<Product> findAll() {
 		List<Product> products = (List<Product>) productRespository.findAll();
-
 		for (Product product : products) {
 			product.setProductDetail(null);
 		}
@@ -157,6 +151,32 @@ public class ProductServiceImpl implements IProductService {
 
 		}
 		return a;
+	}
+
+	@Override
+	public Boolean updateStatus(Long id) {
+		Product a = productRespository.findById(id).get();
+		if(a.getStatus() == false) {
+			a.setStatus(true);
+		} else {
+			a.setStatus(false);
+		}
+		
+		productRespository.save(a);
+		return true;
+	}
+
+	@Override
+	public Page<Product> findProductShow(ProductDto productDto) {
+		Pageable pageable = PageRequest.of(productDto.getPage(), 20);
+		Page<Product> pageProduct = productRespository.getProductShow(pageable);
+		for (Product product : pageProduct) {
+			for (ProductDetail productdetail : product.getProductDetail()) {
+				productdetail.setProduct(null);
+			}
+		}
+		return pageProduct;
+	
 	}
 
 }

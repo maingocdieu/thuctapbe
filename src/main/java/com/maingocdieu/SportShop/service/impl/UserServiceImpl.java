@@ -1,7 +1,9 @@
 package com.maingocdieu.SportShop.service.impl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import com.maingocdieu.SportShop.converter.UserConverter;
 import com.maingocdieu.SportShop.dto.UserDto;
+import com.maingocdieu.SportShop.entity.ERole;
+import com.maingocdieu.SportShop.entity.Role;
 import com.maingocdieu.SportShop.entity.User;
 import com.maingocdieu.SportShop.repository.RoleRepository;
 import com.maingocdieu.SportShop.repository.UserRepository;
@@ -47,11 +51,15 @@ public class UserServiceImpl implements IUserService {
   }
 
   @Override
-  public Boolean deleteUserById(List<Long> id) {
-    for (long l : id) {
-      userReponsitory.deleteById(l);
-    }
-    return true;
+  public Boolean deleteUserById(Long id) {
+	  User  user = userReponsitory.findById(id).get();
+	  if(user.getOrders().size() > 0) {
+		  return false;
+	  } else {
+		  userReponsitory.deleteById(id);
+		  return true;
+	  }
+    
   }
 
 
@@ -82,59 +90,50 @@ public class UserServiceImpl implements IUserService {
     }
   }
 
-//  @Override
-//  public List<User> findByPagingCriteria(String userName, Pageable pageable) {
-//    Page<User> page = userReponsitory.findAll(new Specification<User>() {
-//      private static final long serialVersionUID = 1L;
-//      @Override
-//      public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-//        List<Predicate> predicates = new ArrayList<>();
-//        if (userName != null) {
-//          predicates.add(criteriaBuilder.and(criteriaBuilder.equal(root.get("userName"), userName)));
-//        }
-//        return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
-//      }
-//
-//    }, pageable);
-//    page.getTotalElements();
-//    page.getTotalPages();
-//    return page.getContent();
-//  }
-
-//  @Override
-//  public List<User> findByCriteria(UserDto userDto) {
-//    if (userDto.getIdRole() == null || userDto.getIdRole().isEmpty() || userDto.getIdRole().get(0) == null) {
-//      List<Long> codes = new ArrayList<Long>();
-//      userDto.setIdRole(codes);  
-//      userDto.getIdRole().add(-1L);
-//    }
-//    return userReponsitory.findAllByCriteria(userDto.getUserName());
-//  }
-
-  @Override
-  public Page<User> findPageUser(UserDto userDto) {
-   Pageable firstPageWithTwoElements = PageRequest.of(userDto.getPage(), 3);
-  return userReponsitory.findAllUserWithPagination(userDto.getUsername(), userDto.getIdRole(), userDto.getEmail(), userDto.getAddress(),firstPageWithTwoElements);
-  }
+ 
 
 
-@Override
-public List<User> findByPagingCriteria(String userName, Pageable pageable) {
-	// TODO Auto-generated method stub
-	return null;
-}
 
-@Override
-public List<User> findByCriteria(UserDto userDto) {
-	// TODO Auto-generated method stub
-	return null;
-}
+
 
 @Override
 public Page<User> findAll(UserDto userDto) {
 	Pageable pageable = PageRequest.of(userDto.getPage(), 10);
 	return  userReponsitory.findAll(pageable);
 }
+
+@Override
+public User updateUserAdmin(Long id, UserDto data) {
+	Optional<User> user = userReponsitory.findById(id);
+    if (user.isPresent()) {
+      User updateUser = user.get();
+      updateUser.setFullName(data.getFullName());
+      updateUser.setEmail(data.getEmail());
+      updateUser.setAddress(data.getAddress());
+      updateUser.setPhone(data.getPhone());
+      if(data.getRole() != "-1") {
+    	  Role role;
+    	  Set<Role> roles = new HashSet<>();
+    	  if(data.getRole().equals("ROLE_ADMIN")) {
+    		  role = roleRepository.findByName(ERole.ROLE_ADMIN).get();
+    	  } else {
+    		  role = roleRepository.findByName(ERole.ROLE_USER).get();
+    	  }
+    	  roles.add(role);
+    	  updateUser.setRoles(roles);
+      }
+      userReponsitory.save(updateUser);
+      return updateUser;
+    } else {
+      return null;
+    }
+	
+}
+
+
+
+
+
  
 }
 

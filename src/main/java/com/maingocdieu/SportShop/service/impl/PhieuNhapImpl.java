@@ -115,7 +115,9 @@ public class PhieuNhapImpl implements IPhieuNhapService {
 			if (b.getProductNoteId().getProductId().equals(update.getOldProductId())) {
 				chitietRepository.delete(b);
 				b.getProductNoteId().setProductId(update.getProductId());
-				b.setProductDetail(productDetailRepository.findById(update.getProductId()).get());
+				ProductDetail productDetail = productDetailRepository.findById(update.getProductId()).get();
+				productDetail.setSoLuong(productDetail.getSoLuong() - b.getAmount()+ update.getAmount());
+				b.setProductDetail(productDetail);
 				b.setAmount(update.getAmount());
 				b.setPrice(update.getPrice());
 				chitietRepository.save(b);

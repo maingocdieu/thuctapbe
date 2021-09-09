@@ -23,6 +23,4 @@ public class RoleRestController {
     return ResponseEntity.ok(listAllRole);
   }
   
-  
-  
 }

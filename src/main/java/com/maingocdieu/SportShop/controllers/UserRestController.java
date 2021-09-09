@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,15 +48,6 @@ public class UserRestController {
 	  return new ResponseEntity<Page<User>>(response, HttpStatus.OK);
   }
 
-  @PostMapping("/api/employees/delete")
-  public ResponseEntity<User> deleteUser(@RequestBody List<Long> ids) {
-    Boolean temp = userService.deleteUserById(ids);
-    if (Boolean.TRUE.equals(temp)) {
-      return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
-    }
-    return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
-  }
-
   @PutMapping("/api/employees/{id}")
   public ResponseEntity<?> updateUser(@PathVariable("id") long id, @RequestBody UserDto userEntity) {
     User currentUser = userService.updateUser(id, userEntity);
@@ -70,6 +62,20 @@ public class UserRestController {
     return userService.findAllUser();
   }
 
+  
+  @PostMapping("/api/employees/{id}")
+  public ResponseEntity<?> updateUserAdmin(@PathVariable("id") long id, @RequestBody UserDto userEntity) {
+    User currentUser = userService.updateUserAdmin(id, userEntity);
+    if (currentUser == null) {
+      return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+    }
+    return ResponseEntity.ok(true);
+  }
 
+  
+  @DeleteMapping("/api/employees/{id}")
+  public ResponseEntity<?> delete(@PathVariable("id") long id) {
+    return ResponseEntity.ok(userService.deleteUserById(id));
+  }
 }
 

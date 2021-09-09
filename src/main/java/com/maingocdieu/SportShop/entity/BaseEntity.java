@@ -26,17 +26,12 @@ public abstract class BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column
-	@CreatedBy
-	private String createdBy;
-
+	
 	@Column
 	@CreatedDate
 	private Date createdDate;
 
-	@Column
-	@LastModifiedBy
-	private String modifiedBy;
+	
 
 	@Column
 	@LastModifiedDate

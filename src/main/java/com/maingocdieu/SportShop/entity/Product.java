@@ -31,11 +31,8 @@ public class Product extends BaseEntity {
   @Column(name = "describe",columnDefinition = "ntext")
   private String describe;
 
-  @Column(name = "Price", nullable = false)
-  private Float giaBanRa;
-
-  @Column(name = "SoLuong",columnDefinition = "integer default 0")
-  private Integer soLuong;
+  @Column(columnDefinition = "bit default 0")
+  private Boolean status;
   
   @ManyToOne
   @JoinColumn(name = "category_id")

@@ -28,7 +28,7 @@ public class UserDto extends AbstractDTO<UserDto> {
 
   private String phone;
 
-  private List<Long> idRole;
+  private String role;
 
   private int page;
 

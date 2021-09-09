@@ -27,4 +27,7 @@ public interface IProductService {
   
   public List<Product> findAll();
   
+  Boolean updateStatus(Long id);
+  
+  public Page<Product> findProductShow(ProductDto productDto) ;
 }

@@ -21,6 +21,7 @@ import com.maingocdieu.SportShop.dto.UpdateStatus;
 import com.maingocdieu.SportShop.entity.GoodsReceivedNote;
 import com.maingocdieu.SportShop.entity.GoodsReceivedNoteDetail;
 import com.maingocdieu.SportShop.entity.Product;
+import com.maingocdieu.SportShop.entity.ProductDetail;
 import com.maingocdieu.SportShop.entity.ProductNoteId;
 import com.maingocdieu.SportShop.entity.User;
 import com.maingocdieu.SportShop.payload.reponse.MessageResponse;
@@ -97,6 +98,11 @@ public class ProductRestController {
     return new ResponseEntity<Page<Product>>(response, HttpStatus.OK);
   }
   
+  @PostMapping("/getPageProductUser")
+  public ResponseEntity<Page<Product>> getPageProduct(@RequestBody ProductDto productDto) {
+    Page<Product> response = productService.findProductShow(productDto);
+    return new ResponseEntity<Page<Product>>(response, HttpStatus.OK);
+  }
   @GetMapping("/getPageProductCategory/{id}")
   	public ResponseEntity<Page<Product>> getPageCatgory(@PathVariable("id") Long id) {
     Page<Product> response = productService.findAllByCategorys(id);
@@ -189,7 +195,10 @@ public class ProductRestController {
 	  	s.setProductNoteId(m);
 	  	GoodsReceivedNote a =  phieunhapSerice.GetChiTietPhieuPhap(update.getId());
 	  	s.setGoodsReceivedNote(a);
-	  	s.setProductDetail(productDetailRepo.findById(update.getProductId()).get());
+	  	ProductDetail c = productDetailRepo.findById(update.getProductId()).get();
+	  	c.setSoLuong(c.getSoLuong() + update.getAmount());
+	  	productDetailRepo.save(c);
+	  	s.setProductDetail(c);
 	  	ctpn.save(s);
 	  return ResponseEntity.ok(true); 
 	  
@@ -220,4 +229,9 @@ public class ProductRestController {
 	return ResponseEntity.ok(phieunhapSerice.getListPhieuNhap(page)); 
   }
   
+  @PostMapping("/updateStatusProduct")
+  public ResponseEntity<?> updateProduct(@RequestBody Long id ) {
+	  return ResponseEntity.ok( productService.updateStatus(id));
+	  
+  }
 }

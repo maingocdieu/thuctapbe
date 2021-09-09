@@ -19,6 +19,10 @@ public class GoodsReceivedNote extends BaseEntity {
 
 	@Column
 	private float totalPrice;
+	
+
+	@Column(columnDefinition = "bit default 0")
+	private Boolean status;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	Date dateWrite;

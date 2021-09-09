@@ -16,7 +16,8 @@ public interface ProductReponsitory extends  PagingAndSortingRepository<Product,
   
   Page<Product> findByNameProductContaining( String name, Pageable pageable);
   
-  
+  @Query(value = "select * from product where product.status = 1", nativeQuery = true)
+  Page<Product> getProductShow(Pageable pageable);
   
 
 }

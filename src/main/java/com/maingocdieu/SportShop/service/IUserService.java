@@ -14,7 +14,7 @@ public interface IUserService {
 
   User updateUser(long id, UserDto user);
 
-  Boolean deleteUserById(List<Long> ids);
+  Boolean deleteUserById(Long id);
 
   UserDto insertUser(UserDto userDto);
 
@@ -24,15 +24,12 @@ public interface IUserService {
 
   User findById(Long id);
   
-  public List<User> findByPagingCriteria(String userName,Pageable pageable);
-  
-  public List<User> findByCriteria(UserDto userDto);
-  
-  public Page<User> findPageUser(UserDto userDto);
+
+
   
   Page<User> findAll(UserDto productDto);
   
-  
+User updateUserAdmin(Long id ,UserDto data);
   
 
 
